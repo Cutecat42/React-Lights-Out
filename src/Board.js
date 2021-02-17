@@ -28,14 +28,44 @@ import "./Board.css";
  **/
 
 function Board({ nrows, ncols, chanceLightStartsOn }) {
-  const [board, setBoard] = useState(createBoard());
+  const [board, setBoard] = useState(createBoard(nrows, ncols,chanceLightStartsOn));
 
   /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
-  function createBoard() {
+  function createBoard(nrows, ncols,chanceLightStartsOn=50) {
     let initialBoard = [];
-    // TODO: create array-of-arrays of true/false values
-    return initialBoard;
+    for (let i=0; i < ncols;i++) {
+      initialBoard[i] = []
+      for (let j=0;j < nrows;j++) {
+        let rand = Math.floor(Math.random()*2)
+        if (chanceLightStartsOn===0) {
+          rand = false
+        }
+        if (chanceLightStartsOn===100) {
+          rand = true
+        }
+        if (rand===0) {
+          rand = false
+        }
+        if (rand===1){
+          rand = true
+        }         
+          initialBoard[i][j] = rand 
+      }
+    }
+
+      return (
+        <div className="Board">
+        {initialBoard.map((v,i)=><div key={i}>
+        {console.log("row")}
+        {console.log(v)}
+
+        {v.map((x,i)=><Cell isLit={x} key={i+3}/>)}
+        
+          </div>)}
+          </div>
+      )
   }
+  
 
   function hasWon() {
     // TODO: check the board in state to determine whether the player has won.
@@ -62,12 +92,11 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
   }
 
   // if the game is won, just show a winning msg & render nothing else
-
   // TODO
 
-  // make table board
-
-  // TODO
+  return (
+    board
+  )
 }
 
 export default Board;
