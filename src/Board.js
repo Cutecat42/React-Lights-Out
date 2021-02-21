@@ -51,6 +51,12 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
           initialBoard[i][j] = rand 
       }
     }
+    
+    if (hasWon(initialBoard,ncols,nrows) === true) {
+      return (
+        <div className="Board">Game WON!</div>
+      )
+    }
 
       return (
 
@@ -65,8 +71,15 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
   }
   
 
-  function hasWon() {
-    // TODO: check the board in state to determine whether the player has won.
+  function hasWon(board,ncols,nrows) {
+    for (let i=0;i < nrows;i++) {
+      for (let j=0;j < ncols;j++) {
+        if (board[i][j] === true) {
+          return false
+        }
+      }
+    }
+    return true
   }
 
   function flipCellsAround(coord, initialBoard) {
@@ -94,6 +107,12 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
       const boardCopy = [...initialBoard]
       flipCell(y,x,boardCopy)
 
+      if (hasWon(boardCopy,ncols,nrows) === true) {
+        return (
+          <div className="Board">Game WON!</div>
+        )
+      }
+
       return (
         <div className="Board">
         {boardCopy.map((v,i)=><div key={i}>
@@ -105,9 +124,6 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
       )
     });
   }
-
-  // if the game is won, just show a winning msg & render nothing else
-  // TODO
 
   return (
     board
