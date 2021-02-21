@@ -30,7 +30,6 @@ import "./Board.css";
 function Board({ nrows, ncols, chanceLightStartsOn }) {
   const [board, setBoard] = useState(createBoard(nrows, ncols,chanceLightStartsOn));
 
-  /** create a board nrows high/ncols wide, each cell randomly lit or unlit */
   function createBoard(nrows, ncols,chanceLightStartsOn=50) {
     let initialBoard = [];
     for (let i=0; i < ncols;i++) {
@@ -54,12 +53,11 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
     }
 
       return (
+
         <div className="Board">
         {initialBoard.map((v,i)=><div key={i}>
-        {console.log("row")}
-        {console.log(v)}
 
-        {v.map((x,i)=><Cell isLit={x} key={i+3}/>)}
+        {v.map((x,idx)=><Cell isLit={x} key={`${i}-${idx}`} flipCellsAroundMe={() => flipCellsAround(`${i}-${idx}`,initialBoard)}/>)}
         
           </div>)}
           </div>
@@ -71,23 +69,40 @@ function Board({ nrows, ncols, chanceLightStartsOn }) {
     // TODO: check the board in state to determine whether the player has won.
   }
 
-  function flipCellsAround(coord) {
+  function flipCellsAround(coord, initialBoard) {
     setBoard(oldBoard => {
       const [y, x] = coord.split("-").map(Number);
-
       const flipCell = (y, x, boardCopy) => {
-        // if this coord is actually on board, flip it
 
         if (x >= 0 && x < ncols && y >= 0 && y < nrows) {
           boardCopy[y][x] = !boardCopy[y][x];
+          if (y !== 0) {
+            boardCopy[y-1][x] = !boardCopy[y-1][x];
+          }
+          if (y !== nrows-1) {
+            boardCopy[y+1][x] = !boardCopy[y+1][x];
+          }
+          if (x !== 0) {
+            boardCopy[y][x-1] = !boardCopy[y][x-1];
+          }
+          if (x !== ncols-1) {
+            boardCopy[y][x+1] = !boardCopy[y][x+1];
+          }  
         }
       };
 
-      // TODO: Make a (deep) copy of the oldBoard
+      const boardCopy = [...initialBoard]
+      flipCell(y,x,boardCopy)
 
-      // TODO: in the copy, flip this cell and the cells around it
+      return (
+        <div className="Board">
+        {boardCopy.map((v,i)=><div key={i}>
 
-      // TODO: return the copy
+        {v.map((x,idx)=><Cell isLit={x} key={`${i}-${idx}`} flipCellsAroundMe={() => flipCellsAround(`${i}-${idx}`,boardCopy)}/>)}
+        
+          </div>)}
+          </div>
+      )
     });
   }
 
